@@ -38,13 +38,14 @@ enum LogOutput {
 
 /// Enumeration for Setting the Log Level
 ///
-/// - LogLevelInfo: Prints INFO level Logs
-/// - LogLevelWarn: Prints INFO WARNING Logs and lower
-/// - LogLevelParse: Prints INFO PARSE Logs and lower
-/// - LogLevelError: Prints INFO ERROR Logs and lower
+/// - LogLevelInfo:  Prints INFO level Logs
+/// - LogLevelWarn:  Prints WARNING Logs and lower
+/// - LogLevelWarn:  Prints DEBUG Logs and lower
+/// - LogLevelParse: Prints PARSE Logs and lower
+/// - LogLevelError: Prints ERROR Logs and lower
 
 enum LogLevel:Comparable {
-    case LogLevelInfo, LogLevelWarn, LogLevelParse, LogLevelError
+    case LogLevelInfo, LogLevelWarn, LogLevelDebug, LogLevelParse, LogLevelError
     
     /// Get the log level stamp for the set log level. Change the values in switch statement to return as per need
     ///
@@ -57,6 +58,8 @@ enum LogLevel:Comparable {
             refLevel = "[INFO]"
         case .LogLevelWarn:
             refLevel = "[WARN]"
+        case .LogLevelDebug:
+            refLevel = "[DEBUG]"
         case .LogLevelParse:
             refLevel = "[PARSE]"
         case .LogLevelError:
@@ -114,6 +117,10 @@ class Logger {
         buildLogStatement(items, file: file, line: line, function: function,level:LogLevel.LogLevelWarn)
     }
     
+    class func debug(_ items: Any, file: String = #file, line: Int = #line, function: String = #function) {
+        buildLogStatement(items, file: file, line: line, function: function,level:LogLevel.LogLevelDebug)
+    }
+    
     class func parse(_ items: Any, file: String = #file, line: Int = #line, function: String = #function) {
         buildLogStatement(items, file: file, line: line, function: function,level:LogLevel.LogLevelParse)
     }
@@ -121,7 +128,6 @@ class Logger {
     class func error(_ items: Any, file: String = #file, line: Int = #line, function: String = #function) {
         buildLogStatement(items, file: file, line: line, function: function,level:LogLevel.LogLevelError)
     }
-    
     
     /// 🚧 Work in Progress. Have not yet tested the following code. Will update this soon. ⏱ 🚧
     /// Access the log file

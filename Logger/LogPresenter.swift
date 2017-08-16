@@ -29,6 +29,7 @@ private enum Constants {
     static let errorBtnPressMsg = "Some error in detecting volume button press"
     static let errorReadingFile = "Some error in reading log file"
     
+    // Change color codes here for different levels
     static let infoColor = UIColor.blue
     static let warnColor = UIColor.orange
     static let debugColor = UIColor.yellow
@@ -37,6 +38,8 @@ private enum Constants {
 }
 
 class LogPresenter: NSObject {
+    
+    // Sets up the listeners and inits singleton for displaying log on device
     class func setupOnDeviceWindow() {
         Logger.getLogFile { (logPath) -> (Bool) in
             LogPresenter.sharedInstance.logFilePath = logPath
@@ -77,8 +80,10 @@ class LogPresenter: NSObject {
         }
     }
     
+    //triggers when the volume button is pressed for long
     private func volumeButtonPressed() {
         if volumeBtnPressTimer != nil {
+            //permit execution of required method if the button press is long
             if timeElapsed == 3 {
                 timeElapsed = 0
                 
@@ -97,11 +102,11 @@ class LogPresenter: NSObject {
         }
     }
     
+    // display log view on top of any view controller that is visible currently
     private func pushWKWebViewOverRoot() {
         if !isConsoleViewPresented, let topVC = getTopMostViewController() {
             isConsoleViewPresented = true
             
-            //lets show a view controller on top
             let consoleView = configConsoleWith(topVC)
             let consoleNavigation = configNavigationForConsoleWith(root: consoleView)
             
@@ -114,6 +119,7 @@ class LogPresenter: NSObject {
         
     }
     
+    //reference to the top most view controller in stack
     private func getTopMostViewController() -> UIViewController? {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
@@ -124,6 +130,7 @@ class LogPresenter: NSObject {
         return nil
     }
     
+    // configure the view controller that will contain our logs
     private func configConsoleWith(_ topVC:UIViewController) -> UIViewController {
         let consoleV = UIViewController.init()
         consoleV.view.frame = topVC.view.bounds
@@ -138,6 +145,7 @@ class LogPresenter: NSObject {
         return consoleV
     }
     
+    // display the log in a text view
     private func configTextViewFor(_ consoleView: UIViewController) -> UITextView {
         let textView = UITextView.init(frame: consoleView.view.bounds)
         textView.isEditable = false
@@ -163,12 +171,14 @@ class LogPresenter: NSObject {
         return navController
     }
     
+    // scroll down to the bottom of the text view to display the recent log
     @objc private func scrollToBottom (_ textV: UITextView) {
         if textV.text.characters.count > 0 {
             textV.scrollRangeToVisible(NSMakeRange(textV.text.characters.count - 1 , 0))
         }
     }
     
+    // change colors of log level identifiers when displaying on device
     private func colorLoglevels(fileText:String) -> NSAttributedString {
         let attrStr = NSMutableAttributedString(string: fileText)
         
@@ -181,8 +191,7 @@ class LogPresenter: NSObject {
                 self.modifyLogLevelColors(level, attributedString: attrStr)
             }
         }
-        
-        
+       
         return attrStr
         
     }
